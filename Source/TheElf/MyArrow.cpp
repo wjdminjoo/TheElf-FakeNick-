@@ -8,6 +8,7 @@ AMyArrow::AMyArrow()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	CollisionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("ARROW"));
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MESH"));
 	CollisionComponent->SetRelativeLocation(FVector(3.0f, 1.0f, 6.0f));
 	RootComponent = CollisionComponent;
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("PROJECTILMOVEMENT"));
@@ -17,6 +18,9 @@ AMyArrow::AMyArrow()
 	ProjectileMovementComponent->bRotationFollowsVelocity = true;
 	ProjectileMovementComponent->bShouldBounce = true;
 	ProjectileMovementComponent->Bounciness = 0.3f;
+
+	Mesh->SetupAttachment(CollisionComponent);
+
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MAIN_ARROW(TEXT("/Game/Models/Arrow.Arrow"));
 	if (MAIN_ARROW.Succeeded()) Mesh->SetStaticMesh(MAIN_ARROW.Object);
 

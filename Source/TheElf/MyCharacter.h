@@ -38,11 +38,14 @@ public:
 		USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 		UCameraComponent* Camera;
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		FVector MuzzleOffset;
-	UPROPERTY(EditDefaultsOnly, Category = Arrow)
+	UPROPERTY(EditAnywhere, Category = Arrow)
 		TSubclassOf<class AMyArrow> ArrowClass;
 	
+
 	UFUNCTION()
 		void StartJump();
 	UFUNCTION()
@@ -53,7 +56,7 @@ private:
 	void LookUp(float NewAxisValue);
 	void Turn(float NewAxisValue);
 	void Focus();
-	void Arrow();
+	void Fire();
 
 
 	float ArmLengthTo = 0.0f;
