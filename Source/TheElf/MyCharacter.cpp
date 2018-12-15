@@ -23,7 +23,7 @@ AMyCharacter::AMyCharacter()
 	if (MAIN_CHAR.Succeeded()) GetMesh()->SetSkeletalMesh(MAIN_CHAR.Object);
 
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	static ConstructorHelpers::FClassFinder<UAnimBlueprint> MAIN_ANIME(TEXT("/Game/Mannequin/Animations/ThirdPerson_AnimBP.ThirdPerson_AnimBP"));
+	static ConstructorHelpers::FClassFinder<UAnimBlueprint> MAIN_ANIME(TEXT("AnimBlueprint'/Game/Mannequin/Animations/ThirdPerson_AnimBP_C.ThirdPerson_AnimBP_C'"));
 	if (MAIN_ANIME.Succeeded()) GetMesh()->SetAnimInstanceClass(MAIN_ANIME.Class); 
 
 	
@@ -180,7 +180,7 @@ void AMyCharacter::Focus()
 		break;
 
 	case EControlMode::FOCUS:
-		GetController()->SetControlRotation(SpringArm->RelativeRotation);
+		GetController()->SetControlRotation(GetActorRotation());
 		SetControlMode(EControlMode::THIRD);
 		break;
 	}

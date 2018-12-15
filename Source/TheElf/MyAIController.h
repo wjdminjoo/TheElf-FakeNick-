@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "TheElf.h"
 #include "AIController.h"
 #include "MyAIController.generated.h"
 

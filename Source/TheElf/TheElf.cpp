@@ -3,5 +3,6 @@
 #include "TheElf.h"
 #include "Modules/ModuleManager.h"
 
-IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, TheElf, "TheElf" );
+DEFINE_LOG_CATEGORY(TheElf);
 
+IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, TheElf, "TheElf" );
