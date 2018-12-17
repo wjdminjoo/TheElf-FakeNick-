@@ -11,7 +11,7 @@ UDragonAnimInstance::UDragonAnimInstance() {
 	IsInAir = false;
 	IsDead = false;
 
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATTACK_MONTAGE(TEXT("/Game/AnimationMTG/DragonMTG.DragonMTG"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATTACK_MONTAGE(TEXT("AnimMontage'/Game/AnimationMTG/SK_DesertDragon_Skeleton_Montage.SK_DesertDragon_Skeleton_Montage'"));
 	if (ATTACK_MONTAGE.Succeeded()) AttackMontage = ATTACK_MONTAGE.Object;
 	
 }
@@ -22,10 +22,14 @@ void UDragonAnimInstance::NativeUpdateAnimation(float DeltaSeconds) {
 	auto Pawn = TryGetPawnOwner();
 	if (!::IsValid(Pawn)) return;
 
-	if (!IsDead) {
+	if (!IsDead)
+	{
 		CurrentPawnSpeed = Pawn->GetVelocity().Size();
 		auto Character = Cast<ACharacter>(Pawn);
-		if (Character) IsInAir = Character->GetMovementComponent()->IsFalling();
+		if (Character)
+		{
+			IsInAir = Character->GetMovementComponent()->IsFalling();
+		}
 	}
 }
 
@@ -42,18 +46,20 @@ void UDragonAnimInstance::JumpToAttackMontageSection(int32 NewSection)
 	Montage_JumpToSection(GetAttackMontageSectionName(NewSection), AttackMontage);
 }
 
-void UDragonAnimInstance::AnimNotify_NextAttackCheck()
-{
-	OnNextAttackCheck.Broadcast();
-}
-
 void UDragonAnimInstance::AnimNotify_AttackHitCheck()
 {
 	OnAttackHitCheck.Broadcast();
 }
 
+void UDragonAnimInstance::AnimNotify_NextAttackCheck()
+{
+	OnNextAttackCheck.Broadcast();
+}
+
+
+
 FName UDragonAnimInstance::GetAttackMontageSectionName(int32 Section)
 {
-	ABCHECK(FMath::IsWithinInclusive<int32>(Section, 1, 5), NAME_None);
+	ABCHECK(FMath::IsWithinInclusive<int32>(Section, 1, 4), NAME_None);
 	return FName(*FString::Printf(TEXT("Attack%d"), Section));
 }

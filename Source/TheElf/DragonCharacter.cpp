@@ -27,18 +27,14 @@ ADragonCharacter::ADragonCharacter()
 	if (MAIN_CHAR.Succeeded()) GetMesh()->SetSkeletalMesh(MAIN_CHAR.Object);
 
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	static ConstructorHelpers::FClassFinder<UAnimBlueprint> MAIN_ANIME(TEXT("AnimBlueprint'/Game/AnimationBP/DragonAnimBP_C.DragonAnimBP_C'"));
+	static ConstructorHelpers::FClassFinder<UAnimBlueprint> MAIN_ANIME(TEXT("AnimBlueprint'/Game/AnimationBP/DragonAnimBP.DragonAnimBP'"));
 	if (MAIN_ANIME.Succeeded()) GetMesh()->SetAnimInstanceClass(MAIN_ANIME.Class);
 
-	auto AnimInstance = Cast<UDragonAnimInstance>(GetMesh()->GetAnimInstance());
-	if (nullptr == AnimInstance) return;
 	
-	AnimInstance->PlayAttackMontage();
-
 	GetCharacterMovement()->JumpZVelocity = 800.0f;
 	IsAttacking = false;
 
-	MaxCombo = 5;
+	MaxCombo = 4;
 	AttackEndComboState();
 
 	AttackRange = 200.0f;
@@ -66,7 +62,7 @@ void ADragonCharacter::Tick(float DeltaTime)
 void ADragonCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	ABAnim = Cast< UDragonAnimInstance>(GetMesh()->GetAnimInstance());
+	ABAnim = Cast<UDragonAnimInstance>(GetMesh()->GetAnimInstance());
 	ABCHECK(nullptr != ABAnim);
 	ABAnim->OnMontageEnded.AddDynamic(this, &ADragonCharacter::OnAttackMontageEnded);
 
@@ -92,6 +88,12 @@ void ADragonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 }
 
+void ADragonCharacter::PossessedBy(AController * NewController)
+{
+	Super::PossessedBy(NewController);
+	
+}
+
 float ADragonCharacter::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
@@ -99,6 +101,7 @@ float ADragonCharacter::TakeDamage(float DamageAmount, FDamageEvent const & Dama
 		ABAnim->SetDeadAnim();
 		SetActorEnableCollision(false);
 	}
+	ABLOG(Warning, TEXT("Actor : %s Took Damage : %f"), *GetName(), FinalDamage);
 	return FinalDamage;
 }
 
@@ -192,5 +195,6 @@ void ADragonCharacter::OnAttackMontageEnded(UAnimMontage * Montage, bool bInterr
 	ABCHECK(CurrentCombo > 0);
 	IsAttacking = false;
 	AttackEndComboState();
+	OnAttackEnd.Broadcast();
 }
 

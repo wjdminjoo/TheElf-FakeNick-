@@ -16,16 +16,15 @@ AMyCharacter::AMyCharacter()
 
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f));
 	SpringArm->TargetArmLength = 400.0f;
-	SpringArm->SetRelativeLocation(FVector(0.0f, 100.0f, 50.0f));
-	SpringArm->SetRelativeRotation(FRotator(-30.0f, 0.0f, 0.0f));
+	SpringArm->SetRelativeLocation(FVector(0.0f, 100.0f, 90.0f));
+	SpringArm->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> MAIN_CHAR(TEXT("/Game/Mannequin/Character/Mesh/SK_Mannequin.SK_Mannequin"));
 	if (MAIN_CHAR.Succeeded()) GetMesh()->SetSkeletalMesh(MAIN_CHAR.Object);
 
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	static ConstructorHelpers::FClassFinder<UAnimBlueprint> MAIN_ANIME(TEXT("AnimBlueprint'/Game/Mannequin/Animations/ThirdPerson_AnimBP_C.ThirdPerson_AnimBP_C'"));
-	if (MAIN_ANIME.Succeeded()) GetMesh()->SetAnimInstanceClass(MAIN_ANIME.Class); 
-
+	static ConstructorHelpers::FClassFinder<UAnimBlueprint> MAIN_ANIME(TEXT("AnimBlueprint'/Game/Mannequin/Animations/ThirdPerson_AnimBP.ThirdPerson_AnimBP_C'"));
+	if (MAIN_ANIME.Succeeded())	GetMesh()->SetAnimInstanceClass(MAIN_ANIME.Class);
 	
 	ArmLengthTo = 3.0f;
 	ArmRotationSpeed = 10.0f;
@@ -49,25 +48,26 @@ void AMyCharacter::SetControlMode(EControlMode NewControlMode)
 	switch (CurrnetControlMode) {
 	case EControlMode::THIRD:
 		ArmLengthTo = 400.0f;
-		SpringArm->bUseAttachParentBound = true;
+		SpringArm->bUsePawnControlRotation = true;
 		SpringArm->bInheritPitch = true;
 		SpringArm->bInheritRoll = true;
 		SpringArm->bInheritYaw = true;
 		SpringArm->bDoCollisionTest = true;
-		bUseControllerRotationYaw = true;
+		bUseControllerRotationYaw = false;
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetCharacterMovement()->bUseControllerDesiredRotation = false;
 		GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
 		break;
 	case EControlMode::FOCUS:
 		ArmLengthTo = 100.0f;
-		SpringArm->bUseAttachParentBound = true;
+		SpringArm->bUsePawnControlRotation = true;
 		SpringArm->bInheritPitch = true;
 		SpringArm->bInheritRoll = true;
 		SpringArm->bInheritYaw = true;
 		SpringArm->bDoCollisionTest = true;
-		bUseControllerRotationYaw = true;
+		bUseControllerRotationYaw = false;
 		GetCharacterMovement()->bOrientRotationToMovement = true;
+		GetCharacterMovement()->bUseControllerDesiredRotation = false;
 		GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
 		break;
 	}
@@ -100,6 +100,7 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAction(TEXT("Focus"), EInputEvent::IE_Released, this, &AMyCharacter::Focus);
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &AMyCharacter::Jump);
 	PlayerInputComponent->BindAction(TEXT("Fire"), EInputEvent::IE_Pressed, this, &AMyCharacter::Fire);
+
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &AMyCharacter::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &AMyCharacter::MoveRight);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &AMyCharacter::LookUp);
@@ -120,39 +121,25 @@ void AMyCharacter::StopJump()
 
 void AMyCharacter::MoveForward(float NewAxisValue)
 {
-	switch (CurrnetControlMode)
-	{
-	case EControlMode::THIRD:
-		AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::X), NewAxisValue);
-		break;
-	case EControlMode::FOCUS:
-		AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::X), NewAxisValue);
-		break;
-	}
+	AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::X), NewAxisValue);
+	AddMovementInput(DirectionToMove);
 }
 
 void AMyCharacter::MoveRight(float NewAxisValue)
 {
-	switch (CurrnetControlMode)
-	{
-
-	case EControlMode::THIRD:
-		AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::Y), NewAxisValue);
-		break;
-	case EControlMode::FOCUS:
-		AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::Y), NewAxisValue);
-		break;
-	}
+	AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::Y), NewAxisValue);
+	AddMovementInput(DirectionToMove);
 }
+
 
 void AMyCharacter::LookUp(float NewAxisValue)
 {
 	switch (CurrnetControlMode) {
 		case EControlMode::THIRD:
-			AddControllerPitchInput(NewAxisValue);
+			AddControllerPitchInput(NewAxisValue /2);
 			break;
 		case EControlMode::FOCUS:
-			AddControllerPitchInput(NewAxisValue);
+			AddControllerPitchInput(NewAxisValue / 6);
 			break;
 	}
 }
@@ -164,7 +151,7 @@ void AMyCharacter::Turn(float NewAxisValue)
 		AddControllerYawInput(NewAxisValue);
 		break;
 	case EControlMode::FOCUS:
-		AddControllerYawInput(NewAxisValue);
+		AddControllerYawInput(NewAxisValue / 4);
 		break;
 	}
 

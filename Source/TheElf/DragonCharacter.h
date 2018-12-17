@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "DragonCharacter.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnAttackEndDelegate);
+
 UCLASS()
 class THEELF_API ADragonCharacter : public ACharacter
 {
@@ -25,6 +27,7 @@ public:
 	virtual void PostInitializeComponents() override;
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void PossessedBy(AController* NewController) override;
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 		USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleAnywhere, Category = Camera)
@@ -32,12 +35,14 @@ public:
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;
+	void Attack();
+	FOnAttackEndDelegate OnAttackEnd;
 private:
 	void MoveForward(float NewAxisValue);
 	void MoveRight(float NewAxisValue);
 	void LookUp(float NewAxisValue);
 	void Turn(float NewAxisValue);
-	void Attack();
+	
 	void AttackStartComboState();
 	void AttackEndComboState();
 	void AttackCheck();
