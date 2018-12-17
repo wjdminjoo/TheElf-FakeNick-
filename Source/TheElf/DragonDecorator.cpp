@@ -16,10 +16,9 @@ bool UDragonDecorator::CalculateRawConditionValue(UBehaviorTreeComponent & Owner
 
 	auto ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
 	if (nullptr == ControllingPawn) return false;
-
 	auto Target = Cast<AMyCharacter>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(AMyAIController::TargetKey));
 	if (nullptr == Target) return false;
 
-	bResult = (Target->GetDistanceTo(ControllingPawn) <= 200.0f);
+	bResult = (Target->GetDistanceTo(ControllingPawn) <= 750.0f);
 	return bResult;
 }
