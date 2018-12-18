@@ -33,7 +33,7 @@ ADragonCharacter::ADragonCharacter()
 	
 	GetCharacterMovement()->JumpZVelocity = 800.0f;
 	IsAttacking = false;
-
+	IsFire = false;
 	MaxCombo = 4;
 	AttackEndComboState();
 
@@ -67,7 +67,7 @@ void ADragonCharacter::PostInitializeComponents()
 	ABAnim->OnMontageEnded.AddDynamic(this, &ADragonCharacter::OnAttackMontageEnded);
 
 	ABAnim->OnNextAttackCheck.AddLambda([this]()->void {
-		CanNextCombo = false;
+		CanNextCombo = true;
 		if (IsComboInputOn) {
 			AttackStartComboState();
 			ABAnim->JumpToAttackMontageSection(CurrentCombo);
@@ -85,6 +85,8 @@ void ADragonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &ADragonCharacter::Turn);
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ADragonCharacter::Jump);
 	PlayerInputComponent->BindAction(TEXT("Attack"), EInputEvent::IE_Pressed, this, &ADragonCharacter::Attack);
+	PlayerInputComponent->BindAction(TEXT("Fire"), EInputEvent::IE_Pressed, this, &ADragonCharacter::Fire);
+
 
 }
 
@@ -143,6 +145,17 @@ void ADragonCharacter::Attack() {
 
 }
 
+void ADragonCharacter::Fire() {
+	if(!IsFire) {
+		ABAnim->PlayFireMontage();
+		IsFire = true;
+	}
+	else {
+		ABCHECK(IsFire == true);
+		IsFire = false;
+	}
+}
+
 void ADragonCharacter::AttackStartComboState()
 {
 	CanNextCombo = true;
@@ -194,6 +207,7 @@ void ADragonCharacter::OnAttackMontageEnded(UAnimMontage * Montage, bool bInterr
 	ABCHECK(IsAttacking);
 	ABCHECK(CurrentCombo > 0);
 	IsAttacking = false;
+	IsFire = false;
 	AttackEndComboState();
 	OnAttackEnd.Broadcast();
 }

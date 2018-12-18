@@ -23,7 +23,7 @@ void UDragonService::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMe
 
 	UWorld* World = ControllingPawn->GetWorld();
 	FVector Center = ControllingPawn->GetActorLocation();
-	float DetectRadius = 1600.0f;
+	float DetectRadius = 1800.0f;
 	if (nullptr == World) return;
 
 	TArray<FOverlapResult> OverlapResults;

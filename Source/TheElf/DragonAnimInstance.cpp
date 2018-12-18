@@ -14,6 +14,8 @@ UDragonAnimInstance::UDragonAnimInstance() {
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATTACK_MONTAGE(TEXT("AnimMontage'/Game/AnimationMTG/SK_DesertDragon_Skeleton_Montage.SK_DesertDragon_Skeleton_Montage'"));
 	if (ATTACK_MONTAGE.Succeeded()) AttackMontage = ATTACK_MONTAGE.Object;
 	
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> FIRE_MONTAGE(TEXT("AnimMontage'/Game/AnimationMTG/SK_DesertDragon_SpreadFIre.SK_DesertDragon_SpreadFIre'"));
+	if (FIRE_MONTAGE.Succeeded()) FireMontage = FIRE_MONTAGE.Object;
 }
 
 void UDragonAnimInstance::NativeUpdateAnimation(float DeltaSeconds) {
@@ -37,8 +39,15 @@ void UDragonAnimInstance::PlayAttackMontage()
 {
 	ABCHECK(!IsDead);
 	Montage_Play(AttackMontage, 1.0f);
+
 }
 
+void UDragonAnimInstance::PlayFireMontage()
+{
+	ABCHECK(!IsDead);
+	Montage_Play(FireMontage, 1.0f);
+
+} 
 void UDragonAnimInstance::JumpToAttackMontageSection(int32 NewSection)
 {
 	ABCHECK(!IsDead);
@@ -49,6 +58,11 @@ void UDragonAnimInstance::JumpToAttackMontageSection(int32 NewSection)
 void UDragonAnimInstance::AnimNotify_AttackHitCheck()
 {
 	OnAttackHitCheck.Broadcast();
+}
+
+void UDragonAnimInstance::AnimNotify_FireAttackCheck()
+{
+	OnFireAttack.Broadcast();
 }
 
 void UDragonAnimInstance::AnimNotify_NextAttackCheck()

@@ -9,6 +9,8 @@
 
 DECLARE_MULTICAST_DELEGATE(FOnNextAttackCheckDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnFireAttackDelegate);
+
 
 
 /**
@@ -23,11 +25,13 @@ public:
 	UDragonAnimInstance();
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 	void PlayAttackMontage();
+	void PlayFireMontage();
 	void JumpToAttackMontageSection(int32 NewSection);
 	void SetDeadAnim() { IsDead = true; }
 
 	FOnNextAttackCheckDelegate OnNextAttackCheck;
 	FOnAttackHitCheckDelegate OnAttackHitCheck;
+	FOnFireAttackDelegate OnFireAttack;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
@@ -36,11 +40,14 @@ private:
 		bool IsInAir;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		UAnimMontage* AttackMontage;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* FireMontage;
 	UFUNCTION()
 		void AnimNotify_NextAttackCheck();
 	UFUNCTION()
 		void AnimNotify_AttackHitCheck();
-
+	UFUNCTION()
+		void AnimNotify_FireAttackCheck();
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 		bool IsDead;
 

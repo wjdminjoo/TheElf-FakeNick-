@@ -36,6 +36,7 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;
 	void Attack();
+	void Fire();
 	FOnAttackEndDelegate OnAttackEnd;
 private:
 	void MoveForward(float NewAxisValue);
@@ -52,6 +53,9 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		bool IsAttacking;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		bool IsFire;
 
 	UPROPERTY()
 		class UDragonAnimInstance* ABAnim;
