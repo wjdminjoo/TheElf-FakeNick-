@@ -37,6 +37,7 @@ public:
 		class AController* EventInstigator, AActor* DamageCauser) override;
 	void Attack();
 	void Fire();
+	void Fly();
 	FOnAttackEndDelegate OnAttackEnd;
 private:
 	void MoveForward(float NewAxisValue);
@@ -56,6 +57,8 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		bool IsFire;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		bool IsFlying;
 
 	UPROPERTY()
 		class UDragonAnimInstance* ABAnim;

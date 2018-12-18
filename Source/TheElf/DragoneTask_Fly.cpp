@@ -19,7 +19,7 @@ EBTNodeResult::Type UDragoneTask_Fly::ExecuteTask(UBehaviorTreeComponent & Owner
 	auto MyCharacter = Cast<ADragonCharacter>(OwnerComp.GetAIOwner()->GetPawn());
 	if (nullptr == MyCharacter) return EBTNodeResult::Failed;
 
-	//MyCharacter->Fly();
+	MyCharacter->Fly();
 	IsFlying = true;
 
 	return EBTNodeResult::InProgress;

@@ -57,6 +57,13 @@ void ADragonCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (IsFlying) {
+		GetMesh()->AddRelativeLocation(FVector(0.0f,0.0f, 1.0f));
+	}
+	else if (GetActorLocation().Z >= 400.0f)
+		return;
+	else
+		GetMesh()->AddRelativeLocation(FVector(0.0f, 0.0f, -1.0f));
 }
 
 void ADragonCharacter::PostInitializeComponents()
@@ -155,6 +162,20 @@ void ADragonCharacter::Fire() {
 		IsFire = false;
 	}
 }
+
+void ADragonCharacter::Fly()
+{
+	if (!IsFlying) {
+		ABAnim->PlayFlyMontage();
+		IsFlying = true;
+	}
+	else {
+		ABCHECK(IsFlying == true);
+		IsFlying = false;
+	}
+}
+
+
 
 void ADragonCharacter::AttackStartComboState()
 {

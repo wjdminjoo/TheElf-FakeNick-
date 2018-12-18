@@ -10,12 +10,15 @@ UDragonAnimInstance::UDragonAnimInstance() {
 	CurrentPawnSpeed = 0.0f;
 	IsInAir = false;
 	IsDead = false;
-
+	IsFly = false;
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATTACK_MONTAGE(TEXT("AnimMontage'/Game/AnimationMTG/SK_DesertDragon_Skeleton_Montage.SK_DesertDragon_Skeleton_Montage'"));
 	if (ATTACK_MONTAGE.Succeeded()) AttackMontage = ATTACK_MONTAGE.Object;
 	
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> FIRE_MONTAGE(TEXT("AnimMontage'/Game/AnimationMTG/SK_DesertDragon_SpreadFIre.SK_DesertDragon_SpreadFIre'"));
 	if (FIRE_MONTAGE.Succeeded()) FireMontage = FIRE_MONTAGE.Object;
+
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> FLY_MONTAGE(TEXT("AnimMontage'/Game/AnimationMTG/SK_DesertDragon_Fly.SK_DesertDragon_Fly'"));
+	if (FLY_MONTAGE.Succeeded()) FlyMontage = FLY_MONTAGE.Object;
 }
 
 void UDragonAnimInstance::NativeUpdateAnimation(float DeltaSeconds) {
@@ -31,6 +34,7 @@ void UDragonAnimInstance::NativeUpdateAnimation(float DeltaSeconds) {
 		if (Character)
 		{
 			IsInAir = Character->GetMovementComponent()->IsFalling();
+			IsFly = Character->GetMovementComponent()->IsFlying();
 		}
 	}
 }
@@ -47,7 +51,13 @@ void UDragonAnimInstance::PlayFireMontage()
 	ABCHECK(!IsDead);
 	Montage_Play(FireMontage, 1.0f);
 
-} 
+}
+void UDragonAnimInstance::PlayFlyMontage()
+{
+	ABCHECK(!IsDead);
+	Montage_Play(FlyMontage, 1.0f);
+}
+
 void UDragonAnimInstance::JumpToAttackMontageSection(int32 NewSection)
 {
 	ABCHECK(!IsDead);
@@ -63,6 +73,11 @@ void UDragonAnimInstance::AnimNotify_AttackHitCheck()
 void UDragonAnimInstance::AnimNotify_FireAttackCheck()
 {
 	OnFireAttack.Broadcast();
+}
+
+void UDragonAnimInstance::AnimNotify_FlyCheck()
+{
+	OnFly.Broadcast();
 }
 
 void UDragonAnimInstance::AnimNotify_NextAttackCheck()

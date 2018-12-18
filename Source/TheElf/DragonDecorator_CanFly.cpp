@@ -15,6 +15,7 @@ UDragonDecorator_CanFly::UDragonDecorator_CanFly() {
 bool UDragonDecorator_CanFly::CalculateRawConditionValue(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory) const
 {
 	bool bResult = Super::CalculateRawConditionValue(OwnerComp, NodeMemory);
-	bResult = FMath::RandBool;
+	
+	bResult = FMath::RandRange(0, 1);
 	return bResult;
 }
